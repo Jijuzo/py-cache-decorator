@@ -7,12 +7,14 @@ def cache(func: Callable) -> Callable:
 
     @wraps(func)
     def inner(*args: Any, **kwargs: Any) -> Any:
-        if args in cached_results:
+        kwargs_tuple = tuple(sorted(kwargs.items()))
+        cache_key = args + kwargs_tuple
+        if cache_key in cached_results:
             print("Getting from cache")
-            return cached_results[args]
+            return cached_results[cache_key]
         else:
             print("Calculating new result")
             result = func(*args, **kwargs)
-            cached_results[args] = result
+            cached_results[cache_key] = result
             return result
     return inner
